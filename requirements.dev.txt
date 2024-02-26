@@ -1,0 +1,10 @@
+# the reason we use this new requirements file is bc we'll add a custom step to the build so we only install these dev requirements only when we build an image for our local
+# development server. This is bc we dont need the flake8 and linting tool on the application we deploy on the server, we only need these for development. So we want to separate
+# the development dependencies from the application dependencies so we dont introduce unnecessary packages into the image we deploy on the server.
+# We introduce this mechanism in three steps:
+# first, in the docker-compose file, under context->args: DEV:true
+# second, in the dockerfile: COPY ./requirements.dev.txt  ,  ARG DEV=false
+# So basically, when we use the dockerfile through this docker-compose configuration it'll set the DEV to true, whereas when we use some other docker-compose configuration,
+# it'll set DEV to false. So by default we won't be running in development mode.
+# third, in the dockerfile: we add some logic at: if [ $DEV = "true" ];
+flake8>=3.9.2,<3.10

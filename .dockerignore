@@ -1,0 +1,22 @@
+# this allows to specify a list of files that will be excluded from the docker context. So when you run the docker image, it uses sth called the docker context,
+# which is the directory you are running from. So with this file here we exclude files that docker shouldnt be concerned with.
+
+# Git 
+#(.git is a hidden directory for git that we dont need in the dockerfile bc it can be quite big bc it contains all the git history)
+.git
+.gitignore
+
+# Docker
+.docker
+
+# Python
+# when you run python code, it creates a cache and puts it inside pycache. We don't need it as it might even create problems as it might be specific to our local
+# machine OS and not compatible with our alpine OS
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*/__pycache__/
+# we remove any venvs that we may make locally but we dont need in the image
+.env/
+.venv/
+venv/

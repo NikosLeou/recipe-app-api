@@ -1,0 +1,24 @@
+# the version of the docker-compose syntax that we will be using (new versions are released often)
+version: "3.9"
+
+# this is the main block. docker-compose files are typically consist of one or more service as needed for the application
+services:
+  app:
+    build:
+    #it says we want to build the docker file inside our current directory
+      context: .
+      #check requirements.dev.txt: it basically says if we run using docker-compose (which we only do in development), set DEV=true. This will overwrite the DEV in the dockerfile
+      args:
+        - DEV=true
+    # this maps port 8000 on our local machine to port 8000 inside our docker container. this is how we can access the network when we want to connect to our server
+    ports:
+      - "8000:8000"
+    # this is a way to map directories from our system inside the docker container. we want the updates that we make to our code in the local project to be reflected 
+    # in the container in real time. It basically allows that everything we create inside the container to get mapped to our project, and everything we create in our
+    # project to get mapped inside the container.
+    volumes:
+      - ./app:/app
+    # this is the command you use to run the service. This command can be overwritten when runnning "docker compose run", but if we dont then this one here is used
+    # by default
+    command:  >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
