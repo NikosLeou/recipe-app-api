@@ -13,11 +13,11 @@ jobs:
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_TOKEN}}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       # this action checks our code out inside the github actions job; this doesnt happen by default inside the job we are running. In our case, we need to access the code by we need to run tests and linting
       # on the code.
       - name: Checkout
-        uses: actions/checkout/v2
+        uses: actions/checkout@v2
       # this action runs the unit tests (you can copy it and run it on the termninal in the root directory and see what happens)
       - name: Test
         run: docker-compose run --rm app sh -c "python manage.py test"
