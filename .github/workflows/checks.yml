@@ -21,7 +21,7 @@ jobs:
       # this action runs the unit tests (you can copy it and run it on the termninal in the root directory and see what happens). Additional logic: before we run the tests, we need to run wait_for_db bc the
       # depend on the DB being available.
       - name: Test
-        run: docker-compose run --rm app sh -c "python panage.py wait_for_db && python manage.py test"
+        run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
       # this action runs the linting (again, you can try it in the terminal)
       - name: Linting
         run: docker-compose run --rm app sh -c "flake8"
