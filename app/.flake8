@@ -14,5 +14,5 @@ exclude =
 
 
 # once we save this, we run the linting tool by going to the terminal and run:
-docker-compose run --rm app sh -c "flake8"
+# docker-compose run --rm app sh -c "flake8"
 # if we don't have anything returned, it means we are good.

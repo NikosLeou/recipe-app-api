@@ -18,7 +18,34 @@ services:
     # project to get mapped inside the container.
     volumes:
       - ./app:/app
-    # this is the command you use to run the service. This command can be overwritten when runnning "docker compose run", but if we dont then this one here is used
+    # this is the command you use to run the service. This command can be overwritten when runnning "docker-compose run", but if we dont then this one here is used
     # by default
+    # Additional logic has been added: we want to run the wait_for_db first, then apply any migrations to the DB, then start the server.
     command:  >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      # using depends_on ensures that the DB services starts, but doesnt ensure that the application (DB) running on that service is actually running. For that reason, we'll have to write a 
+      # custom Django management command (wait_for_db) that will check if the DB has started, and hold up execution if not, as well as a corresponding unit test.
+    depends_on:
+      - db
+
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+
+
+volumes:
+  dev-db-data:

@@ -38,9 +38,9 @@ ARG DEV=false
 # with Docker, but there are some cases where there are some python dependencies on the base image that might conflict with the python dependencies for 
 # your project.
 
-# then we upgrade pip for the virtual enviroment we created by specifying the ful path to our virtual environment (/py/bin/).
+# then we upgrade pip for the virtual enviroment we created by specifying the full path to our virtual environment (/py/bin/).
 # then we install our requirements inside the docker image inside the virtual environment
-# then we remove the /tmp directory; we dont want any extra dependencies on our image, it's best practice keep docker images lightweight and remove any files 
+# then we remove the /tmp directory; we dont want any extra dependencies on our image, it's best practice to keep docker images lightweight and remove any files 
 # you dont need during building the image -> more speed and less space when deploying the application
 
 # then we add a new user inside our image in order not to use the root user. if we didnt do this, the only user inside the alpine image would be the root user;
@@ -50,12 +50,16 @@ ARG DEV=false
 # Finally we specify the name of the user, you can call it whatever you want.
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \ 
     /py/bin/pip install -r /tmp/requirements.txt && \
     #check requirements.dev.txt
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt; \
     fi && \
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     adduser \
         --disabled-password \
         --no-create-home \
